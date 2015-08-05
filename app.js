@@ -6,6 +6,7 @@ var lessCSS = require('less-middleware');
 var bodyParser = require('body-parser')
 
 var loggly = require('loggly');
+var secrets = require('./lib/secrets');
 
 // Variables from project
 
@@ -85,4 +86,3 @@ var server = app.listen(3000, function () {
 
   console.log('Example app listening at http://%s:%d', host, port);
 });
-

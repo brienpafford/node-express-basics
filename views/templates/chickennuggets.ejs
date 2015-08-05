@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <title><%= title %> | Chicken Nuggets</title>
+    <link rel = "stylesheet" href="/stylesheets/main.css"
+  </head>
+  <body>
+    <h1>World Famous Chicken Nuggets</h1>
+    <!-- Server Side Stuff, action on the form -->
+    <form action="/chickennuggets/order" method = "POST">
+    	Name: <input name="name" type="text" placeholder = "Name">
+    	Style: 
+      <select name = "style">
+    		<option value ="Mild">Mild</option>
+    		<option value ="Medium">Medium</option>
+    		<option value ="Hot">Hot</option>
+    		<option value ="SuperNova">SuperNova</option>
+    	</select>
+    	Qty: <input name = "qty" type = "number" min="6">
+    	<input type = "submit">
+    </form>
+  </body>
+</html>
