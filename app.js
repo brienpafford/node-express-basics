@@ -3,6 +3,7 @@
 var express = require('express');
 var fs      = require('fs');
 var lessCSS = require('less-middleware');
+var bodyParser = require('body-parser')
 
 var loggly = require('loggly');
 
@@ -10,6 +11,7 @@ var loggly = require('loggly');
 
 var routes  = require('./routes/index');
 var pizza   = require('./routes/pizza');
+var chickennuggets = require('./routes/chickennuggets')
 
 var app     = express();
 
@@ -61,9 +63,11 @@ app.use(function(err, req, res, next) {
 
 
 app.use(express.static('public'));
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.use('/', routes);
 app.use('/pizza', pizza);
+app.use('/chickennuggets', chickennuggets);
 
 app.use(function (req, res) {
   res.status(403).send('Unauthorized!');
