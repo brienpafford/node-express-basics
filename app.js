@@ -1,80 +1,69 @@
-// Node Packages
+var fs = require('fs');
 
 var express = require('express');
-var fs      = require('fs');
 var lessCSS = require('less-middleware');
+var morgan = require('morgan');
 var bodyParser = require('body-parser')
 
-var loggly = require('loggly');
-var secrets = require('./lib/secrets');
+var routes = require('./routes/index');
+var pizza = require('./routes/pizza');
+var chickennuggets = require('./routes/chickennuggets');
+var imgur = require('./routes/imgur');
 
-// Variables from project
+var app = express();
 
-var routes  = require('./routes/index');
-var pizza   = require('./routes/pizza');
-var chickennuggets = require('./routes/chickennuggets')
-
-var app     = express();
+require('./lib/secrets');
 
 app.set('view engine', 'ejs');
 app.set('case sensitive routing', true);
 
-app.locals.title = 'awesome_stuff';
+app.locals.title = 'aweso.me';
 
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(lessCSS('public'));
 
-// app.use(function (req, res, next) {
-//   // logging at the top
-//   console.log('Request at ' + new Date().toISOString());
-//   next();
-// });
-
-// Create a Stream
-
 var logStream = fs.createWriteStream('access.log', {flags: 'a'});
+app.use(morgan('combined', {stream: logStream}));
+app.use(morgan('dev'));
 
-// Execute winston
-
-app.use(function (err, req, res, next) {
+app.use(function (req, res, next) {
   var client = require('./lib/loggly')('incoming');
+
   client.log({
     ip: req.ip,
     date: new Date(),
     url: req.url,
     status: res.statusCode,
-    method: req.method,
-    err: err
+    method: req.method
   });
   next();
-})
-
-app.use(function(err, req, res, next) {
-  var client = require('./lib/loggly')('error');
-  client.log({
-    ip     : req.ip,
-    date   : new Date(),
-    url    : req.url,
-    status : res.statusCode,
-    method : req.method,
-    error  : err
-  });
-  res.status(500).send('[Error message]');
 });
 
-
-
 app.use(express.static('public'));
-app.use(bodyParser.urlencoded({extended: false}));
+
+
 
 app.use('/', routes);
 app.use('/pizza', pizza);
 app.use('/chickennuggets', chickennuggets);
+app.use('/imgur', imgur);
 
 app.use(function (req, res) {
   res.status(403).send('Unauthorized!');
 });
 
 app.use(function (err, req, res, next) {
+  var client = require('./lib/loggly')('error');
+
+  client.log({
+    ip: req.ip,
+    date: new Date(),
+    url: req.url,
+    status: res.statusCode,
+    method: req.method,
+    stackTrace: err.stack
+  });
+
   // pass 4 arguments to create an error handling middleware
   console.log('ERRRRRRRRRR', err.stack);
   res.status(500).send('My Bad');
