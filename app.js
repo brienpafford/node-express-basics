@@ -3,7 +3,7 @@ var fs = require('fs');
 var express = require('express');
 var lessCSS = require('less-middleware');
 var morgan = require('morgan');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var pizza = require('./routes/pizza');
@@ -13,6 +13,7 @@ var imgur = require('./routes/imgur');
 var app = express();
 
 require('./lib/secrets');
+require('./lib/mongodb');
 
 app.set('view engine', 'ejs');
 app.set('case sensitive routing', true);
@@ -72,6 +73,6 @@ app.use(function (err, req, res, next) {
 var server = app.listen(3000, function () {
   var host = server.address().address;
   var port = server.address().port;
-
+  console.log(process.env);
   console.log('Example app listening at http://%s:%d', host, port);
 });

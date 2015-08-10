@@ -37,4 +37,4 @@ router.post('/upload', upload.single('image'), function (req, res) {
   }
 });
 
-module.exports = router
+module.exports = router;
